@@ -1,21 +1,29 @@
-//
-//  ContentView.swift
-//  Firebase-Authentication
-//
-//  Created by administrator on 2021/08/05.
-//
-
 import SwiftUI
+import Firebase
 
 struct ContentView: View {
-    var body: some View {
-        Text("Hello, world!")
-            .padding()
-    }
-}
+    @ObservedObject private var authState = FirebaseAuthStateObserver()
+    @State var isShowSheet = false
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
+    var body: some View {
+        VStack {
+            if authState.isSignin {
+                Text("You are logined.")
+                    .padding()
+                Button("logout") {
+                    try! Auth.auth().signOut()
+                }
+            }
+            else {
+                Text("You are not logged in.")
+                    .padding()
+                Button("login") {
+                    isShowSheet.toggle()
+                }
+            }
+        }
+        .sheet(isPresented: $isShowSheet, content: {
+            FirebaseUIView()
+        })
     }
 }

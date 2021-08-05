@@ -1,17 +1,31 @@
-//
-//  Firebase_AuthenticationApp.swift
-//  Firebase-Authentication
-//
-//  Created by administrator on 2021/08/05.
-//
-
 import SwiftUI
+import FirebaseUI
 
-@main
-struct Firebase_AuthenticationApp: App {
-    var body: some Scene {
-        WindowGroup {
-            ContentView()
+struct FirebaseUIView: UIViewControllerRepresentable {
+    typealias UIViewControllerType = UINavigationController
+
+    class Coordinator: NSObject, FUIAuthDelegate {
+        let parent: FirebaseUIView
+        init(_ parent: FirebaseUIView) {
+            self.parent = parent
         }
+    }
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+
+    func makeUIViewController(context: Context) -> UINavigationController {
+        let authUI = FUIAuth.defaultAuthUI()!
+        let providers: [FUIAuthProvider] = [
+            FUIGoogleAuth(authUI: authUI),
+        ]
+        authUI.providers = providers
+        authUI.delegate = context.coordinator
+        return authUI.authViewController()
+    }
+
+    func updateUIViewController(_ uiViewController: UINavigationController, context: Context) {
+
     }
 }
